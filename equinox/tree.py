@@ -8,6 +8,7 @@ from jaxtyping import Array, Bool, PyTree
 
 from .custom_types import sentinel
 from .doc_utils import doc_repr
+from .filters import is_array
 
 
 _Node = doc_repr(Any, "Node")
@@ -214,7 +215,7 @@ def tree_at(
 def tree_equal(*pytrees: PyTree) -> Union[bool, np.bool_, Bool[Array, ""]]:
     """Returns `True` if all input PyTrees are equal. Every PyTree must have the same
     structure. Any JAX or NumPy arrays (as leaves) must have the same shape, dtype, and
-    values to be considered equal. JAX arrays and NumPy arrays are not considered equal
+    values to be considered equal. JAX arrays and NumPy arrays may be considered equal
     to each other.
 
     **Arguments:**
@@ -226,20 +227,15 @@ def tree_equal(*pytrees: PyTree) -> Union[bool, np.bool_, Bool[Array, ""]]:
     A boolean.
     """
     flat, treedef = jtu.tree_flatten(pytrees[0])
-    array_types = (jnp.ndarray, np.ndarray)
     out = True
     for pytree in pytrees[1:]:
         flat_, treedef_ = jtu.tree_flatten(pytree)
         if treedef_ != treedef:
             return False
         for elem, elem_ in zip(flat, flat_):
-            if isinstance(elem, array_types):
-                if isinstance(elem_, array_types):
-                    if (
-                        (type(elem) != type(elem_))
-                        or (elem.shape != elem_.shape)
-                        or (elem.dtype != elem_.dtype)
-                    ):
+            if is_array(elem):
+                if is_array(elem_):
+                    if (elem.shape != elem_.shape) or (elem.dtype != elem_.dtype):
                         return False
                     allsame = (elem == elem_).all()
                     if allsame is False:
@@ -248,7 +244,7 @@ def tree_equal(*pytrees: PyTree) -> Union[bool, np.bool_, Bool[Array, ""]]:
                 else:
                     return False
             else:
-                if isinstance(elem_, array_types):
+                if is_array(elem_):
                     return False
                 else:
                     if elem != elem_:
