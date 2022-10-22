@@ -11,9 +11,10 @@ name = "equinox"
 # for simplicity we actually store the version in the __version__ attribute in the
 # source
 with open(_here / name / "__init__.py") as f:
-    meta_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", f.read(), re.M)
-    if meta_match:
-        version = meta_match.group(1)
+    if meta_match := re.search(
+        r"^__version__ = ['\"]([^'\"]*)['\"]", f.read(), re.M
+    ):
+        version = meta_match[1]
     else:
         raise RuntimeError("Unable to find __version__ string.")
 
@@ -26,7 +27,7 @@ description = "PyTorch-like neural networks in JAX"
 with open(_here / "README.md", "r") as f:
     readme = f.read()
 
-url = "https://github.com/patrick-kidger/" + name
+url = f"https://github.com/patrick-kidger/{name}"
 
 license = "Apache-2.0"
 

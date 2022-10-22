@@ -156,6 +156,7 @@ def test_aux(api_version, getkey):
 @pytest.mark.parametrize("call", [False, True])
 @pytest.mark.parametrize("outer", [False, True])
 def test_methods(call, outer):
+
     class M(eqx.Module):
         increment: Union[int, jnp.ndarray]
 
@@ -183,11 +184,10 @@ def test_methods(call, outer):
             assert eqx.filter_grad(m)(y) == 1
         else:
             assert m(y) == grad_m
+    elif outer:
+        assert eqx.filter_grad(m.method)(y) == 1
     else:
-        if outer:
-            assert eqx.filter_grad(m.method)(y) == 1
-        else:
-            assert m.method(y) == grad_m
+        assert m.method(y) == grad_m
 
 
 def test_grad_jit():

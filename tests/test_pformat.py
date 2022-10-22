@@ -23,7 +23,7 @@ def test_list():
 def test_dict():
     assert eqx.tree_pformat({"a": 1, "b": 2}) == "{'a': 1, 'b': 2}"
     assert eqx.tree_pformat({"a": 1}) == "{'a': 1}"
-    assert eqx.tree_pformat(dict()) == "{}"
+    assert eqx.tree_pformat({}) == "{}"
 
 
 def test_module(getkey):

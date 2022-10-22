@@ -48,10 +48,7 @@ def test_tree_at_replace_fn(getkey):
     pytree = [1, 2, 3, {"a": jnp.array([1.0, 2.0])}, eqx.nn.Linear(1, 2, key=key)]
 
     def replace_fn(x):
-        if isinstance(x, int):
-            return "found an int"
-        else:
-            return x
+        return "found an int" if isinstance(x, int) else x
 
     true_pytree1 = [
         "found an int",

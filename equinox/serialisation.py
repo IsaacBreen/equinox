@@ -93,8 +93,6 @@ def default_serialise_filter_spec(f: BinaryIO, x: Any) -> None:
                     "Can only serialise usages of StateIndex storing np.ndarray "
                     f"or tuples of jnp.ndarray, got {value_str}"
                 )
-    else:
-        pass
 
 
 def default_deserialise_filter_spec(f: BinaryIO, x: Any) -> Any:
@@ -157,10 +155,7 @@ def default_deserialise_filter_spec(f: BinaryIO, x: Any) -> Any:
 
 def _with_suffix(path):
     path = pathlib.Path(path)
-    if path.suffix == "":
-        return path.with_suffix(".eqx")
-    else:
-        return path
+    return path.with_suffix(".eqx") if path.suffix == "" else path
 
 
 def _assert_same(new, old):

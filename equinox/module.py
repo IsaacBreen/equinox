@@ -52,9 +52,7 @@ class _wrap_method:
             self.__isabstractmethod__ = self.method.__isabstractmethod__
 
     def __get__(self, instance, owner):
-        if instance is None:
-            return self.method
-        return jtu.Partial(self.method, instance)
+        return self.method if instance is None else jtu.Partial(self.method, instance)
 
 
 def _not_magic(k: str) -> bool:
@@ -138,9 +136,7 @@ def _make_initable(cls: _ModuleMeta, wraps: bool) -> _ModuleMeta:
 
 
 def _has_dataclass_init(cls: _ModuleMeta) -> bool:
-    if "__init__" in cls.__dict__:
-        return False
-    return cls._has_dataclass_init
+    return False if "__init__" in cls.__dict__ else cls._has_dataclass_init
 
 
 class Module(metaclass=_ModuleMeta):

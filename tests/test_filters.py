@@ -98,8 +98,9 @@ def test_filter(getkey):
         for arg in jtu.tree_leaves(filtered):
             assert isinstance(arg, int)
         num_int_leaves = sum(
-            1 for leaf in jtu.tree_leaves(filtered) if isinstance(leaf, int)
+            isinstance(leaf, int) for leaf in jtu.tree_leaves(filtered)
         )
+
         assert len(jtu.tree_leaves(filtered)) == num_int_leaves
 
     filter_spec = [False, True, [filter_fn, True]]
@@ -149,6 +150,7 @@ def test_partition_subtree():
 
 
 def test_is_leaf():
+
     class M(eqx.Module):
         value: Any
 
@@ -156,9 +158,7 @@ def test_is_leaf():
         return isinstance(x, M)
 
     def filter_spec(x):
-        if is_m(x):
-            return x.value == 1
-        return True
+        return x.value == 1 if is_m(x) else True
 
     pytree = [M(1), M(2), 3]
     out = eqx.filter(pytree, filter_spec, is_leaf=is_m)

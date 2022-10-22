@@ -112,7 +112,7 @@ def filter(
         kept or replaced.
     """
 
-    inverse = bool(inverse)  # just in case, to make the != trick below work reliably
+    inverse = inverse
     filter_tree = jtu.tree_map(_make_filter_tree(is_leaf), filter_spec, pytree)
     return jtu.tree_map(
         lambda mask, x: x if bool(mask) != inverse else replace, filter_tree, pytree
@@ -140,10 +140,7 @@ def partition(
 
 
 def _combine(*args):
-    for arg in args:
-        if arg is not None:
-            return arg
-    return None
+    return next((arg for arg in args if arg is not None), None)
 
 
 def _is_none(x):

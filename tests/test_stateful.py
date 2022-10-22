@@ -239,7 +239,7 @@ def test_inference_jit_input():
     @eqx.filter_jit
     def f(i):
         nonlocal num_jits
-        num_jits = num_jits + 1
+        num_jits += 1
         x = eqx.experimental.get_state(i, jnp.array(0))
         return x + 1
 
@@ -269,7 +269,7 @@ def test_inference_jit_closure():
     @eqx.filter_jit
     def f():
         nonlocal num_jits
-        num_jits = num_jits + 1
+        num_jits += 1
         x = eqx.experimental.get_state(index_inference, jnp.array(0))
         return x + 1
 
@@ -296,6 +296,7 @@ def test_inference_jit_closure():
 
 
 def test_inference_fixed_wrapper():
+
     class M:
         def __init__(self, value):
             self.value = value
@@ -311,7 +312,7 @@ def test_inference_fixed_wrapper():
     @eqx.filter_jit
     def f(k):
         nonlocal num_jits
-        num_jits = num_jits + 1
+        num_jits += 1
         return eqx.experimental.get_state(k.value, jnp.array(2))
 
     assert jnp.array_equal(f(m), jnp.array(1))

@@ -26,9 +26,7 @@ class Static(Module):
 def _strip_wrapped_partial(fun):
     if hasattr(fun, "__wrapped__"):  # ft.wraps
         return _strip_wrapped_partial(fun.__wrapped__)
-    if isinstance(fun, ft.partial):
-        return _strip_wrapped_partial(fun.func)
-    return fun
+    return _strip_wrapped_partial(fun.func) if isinstance(fun, ft.partial) else fun
 
 
 def get_fun_names(fun):

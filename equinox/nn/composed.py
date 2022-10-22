@@ -67,8 +67,11 @@ class MLP(Module):
             layers.append(Linear(in_size, out_size, key=keys[0]))
         else:
             layers.append(Linear(in_size, width_size, key=keys[0]))
-            for i in range(depth - 1):
-                layers.append(Linear(width_size, width_size, key=keys[i + 1]))
+            layers.extend(
+                Linear(width_size, width_size, key=keys[i + 1])
+                for i in range(depth - 1)
+            )
+
             layers.append(Linear(width_size, out_size, key=keys[-1]))
         self.layers = layers
         self.in_size = in_size

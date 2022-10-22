@@ -155,13 +155,11 @@ def tree_at(
             raise ValueError(
                 "Precisely one of `replace` and `replace_fn` must be specified."
             )
-        else:
+        def _replace_fn(x):
+            x = jtu.tree_map(_remove_leaf_wrapper, x)
+            return replace_fn(x)
 
-            def _replace_fn(x):
-                x = jtu.tree_map(_remove_leaf_wrapper, x)
-                return replace_fn(x)
-
-            replace_fns = [_replace_fn] * len(nodes)
+        replace_fns = [_replace_fn] * len(nodes)
     else:
         if replace_fn is sentinel:
             if len(nodes) != len(replace):
@@ -234,21 +232,20 @@ def tree_equal(*pytrees: PyTree) -> Union[bool, np.bool_, Bool[Array, ""]]:
             return False
         for elem, elem_ in zip(flat, flat_):
             if isinstance(elem, array_types):
-                if isinstance(elem_, array_types):
-                    if (elem.shape != elem_.shape) or (elem.dtype != elem_.dtype):
-                        return False
-                    allsame = (elem == elem_).all()
-                    if allsame is False:
-                        return False
-                    out = out & allsame
-                else:
+                if not isinstance(elem_, array_types):
                     return False
-            else:
-                if isinstance(elem_, array_types):
+                if (elem.shape != elem_.shape) or (elem.dtype != elem_.dtype):
                     return False
-                else:
-                    if elem != elem_:
-                        return False
+                allsame = (elem == elem_).all()
+                if allsame is False:
+                    return False
+                out = out & allsame
+            elif (
+                not isinstance(elem_, array_types)
+                and elem != elem_
+                or isinstance(elem_, array_types)
+            ):
+                return False
     return out
 
 
