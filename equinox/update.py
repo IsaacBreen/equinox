@@ -3,10 +3,7 @@ from jaxtyping import PyTree
 
 
 def _apply_update(u, p):
-    if u is None:
-        return p
-    else:
-        return p + u
+    return p if u is None else p + u
 
 
 def _is_none(x):

@@ -12,10 +12,7 @@ def test_eval_shape(getkey):
     sentinel3 = object()
 
     def call(fn1, fn2, x, flag):
-        if flag is sentinel1:
-            return fn1(x), sentinel2
-        else:
-            return fn2(x), sentinel3
+        return (fn1(x), sentinel2) if flag is sentinel1 else (fn2(x), sentinel3)
 
     y = jnp.array([1.0])
     z = jax.ShapeDtypeStruct(shape=y.shape, dtype=y.dtype)

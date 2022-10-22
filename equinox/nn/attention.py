@@ -46,8 +46,7 @@ def dot_product_attention(
     weights = dot_product_attention_weights(query, key_, mask)
     if dropout is not None:
         weights = dropout(weights, key=key, inference=inference)
-    attn = jnp.einsum("sS,Sd->sd", weights, value)
-    return attn
+    return jnp.einsum("sS,Sd->sd", weights, value)
 
 
 class MultiheadAttention(Module):

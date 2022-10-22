@@ -31,9 +31,7 @@ class _ValueAndGradWrapper(Module):
         return fun_value_and_grad(diff_x, nondiff_x, *args, **kwargs)
 
     def __get__(self, instance, owner):
-        if instance is None:
-            return self
-        return jtu.Partial(self, instance)
+        return self if instance is None else jtu.Partial(self, instance)
 
 
 class _GradWrapper(Module):
@@ -49,9 +47,7 @@ class _GradWrapper(Module):
             return grad
 
     def __get__(self, instance, owner):
-        if instance is None:
-            return self
-        return jtu.Partial(self, instance)
+        return self if instance is None else jtu.Partial(self, instance)
 
 
 @doc_strip_annotations

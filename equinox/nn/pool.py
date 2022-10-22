@@ -480,18 +480,17 @@ def _adaptive_pool1d(x: Array, target_size: int, operation: Callable) -> Array:
     """
     dims = jnp.size(x)
     num_head_arrays = dims % target_size
-    if num_head_arrays != 0:
-        head_end_index = num_head_arrays * (dims // target_size + 1)
-        head_op = jax.vmap(operation)(x[:head_end_index].reshape(num_head_arrays, -1))
-        tail_op = jax.vmap(operation)(
-            x[head_end_index:].reshape(-1, dims // target_size)
-        )
-        outputs = jnp.concatenate([head_op, tail_op])
-    else:
-        outputs = jax.vmap(operation)(
+    if num_head_arrays == 0:
+        return jax.vmap(operation)(
             jax.vmap(operation)(x.reshape(-1, dims // target_size))
         )
-    return outputs
+
+    head_end_index = num_head_arrays * (dims // target_size + 1)
+    head_op = jax.vmap(operation)(x[:head_end_index].reshape(num_head_arrays, -1))
+    tail_op = jax.vmap(operation)(
+        x[head_end_index:].reshape(-1, dims // target_size)
+    )
+    return jnp.concatenate([head_op, tail_op])
 
 
 class AdaptivePool(Module):

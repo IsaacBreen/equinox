@@ -112,25 +112,21 @@ def _pformat_dataclass(obj: Dataclass, **kwargs) -> pp.Doc:
 
 def _pformat_array(obj: Union[jnp.ndarray, np.ndarray], **kwargs) -> pp.Doc:
     short = kwargs["short_arrays"]
-    if short:
-        dtype_str = (
-            obj.dtype.name.replace("float", "f")
-            .replace("uint", "u")
-            .replace("int", "i")
-            .replace("complex", "c")
-        )
-        shape_str = ",".join(map(str, obj.shape))
-        backend = "(numpy)" if isinstance(obj, np.ndarray) else ""
-        return pp.text(f"{dtype_str}[{shape_str}]{backend}")
-    else:
+    if not short:
         return pp.text(repr(obj))
+    dtype_str = (
+        obj.dtype.name.replace("float", "f")
+        .replace("uint", "u")
+        .replace("int", "i")
+        .replace("complex", "c")
+    )
+    shape_str = ",".join(map(str, obj.shape))
+    backend = "(numpy)" if isinstance(obj, np.ndarray) else ""
+    return pp.text(f"{dtype_str}[{shape_str}]{backend}")
 
 
 def _pformat_function(obj: types.FunctionType, **kwargs) -> pp.Doc:
-    if kwargs.get("wrapped", False):
-        fn = "wrapped function"
-    else:
-        fn = "function"
+    fn = "wrapped function" if kwargs.get("wrapped", False) else "function"
     return pp.text(f"<{fn} {obj.__name__}>")
 
 

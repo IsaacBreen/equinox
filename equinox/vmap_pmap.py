@@ -196,9 +196,7 @@ class _VmapWrapper(Module):
         return combine(vmapd, nonvmapd)
 
     def __get__(self, instance, owner):
-        if instance is None:
-            return self
-        return jtu.Partial(self, instance)
+        return self if instance is None else jtu.Partial(self, instance)
 
 
 # Note the use of AxisSpec rather than MapAxisSpec.
@@ -484,19 +482,18 @@ class _PmapWrapper(Module):
         )
         if is_lower:
             return cached.lower(dynamic, static_leaves, static_treedef, self._out)
-        else:
-            (
-                pmapd,
-                dynamic_nonpmapd,
-                static_nonpmapd_leaves,
-                static_nonpmapd_treedef,
-            ) = cached(dynamic, static_leaves, static_treedef, self._out)
-            nonpmapd = hashable_combine(
-                dynamic_nonpmapd,
-                static_nonpmapd_leaves.value,
-                static_nonpmapd_treedef.value,
-            )
-            return combine(*pmapd, nonpmapd)
+        (
+            pmapd,
+            dynamic_nonpmapd,
+            static_nonpmapd_leaves,
+            static_nonpmapd_treedef,
+        ) = cached(dynamic, static_leaves, static_treedef, self._out)
+        nonpmapd = hashable_combine(
+            dynamic_nonpmapd,
+            static_nonpmapd_leaves.value,
+            static_nonpmapd_treedef.value,
+        )
+        return combine(*pmapd, nonpmapd)
 
     def __call__(__self, *args, **kwargs):
         return __self._call(False, args, kwargs)
@@ -505,9 +502,7 @@ class _PmapWrapper(Module):
         return __self._call(True, args, kwargs)
 
     def __get__(self, instance, owner):
-        if instance is None:
-            return self
-        return jtu.Partial(self, instance)
+        return self if instance is None else jtu.Partial(self, instance)
 
 
 @doc_strip_annotations

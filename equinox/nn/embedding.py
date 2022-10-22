@@ -35,12 +35,12 @@ class Embedding(Module):
         super().__init__(**kwargs)
         if weight is None:
             self.weight = jrandom.normal(key, (num_embeddings, embedding_size))
-        else:
-            if weight.shape != (num_embeddings, embedding_size):
-                raise ValueError(
-                    "weight must have shape (num_embeddings, embedding_size)."
-                )
+        elif weight.shape == (num_embeddings, embedding_size):
             self.weight = weight
+        else:
+            raise ValueError(
+                "weight must have shape (num_embeddings, embedding_size)."
+            )
         self.num_embeddings = num_embeddings
         self.embedding_size = embedding_size
 

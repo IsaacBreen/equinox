@@ -30,10 +30,7 @@ def _ntuple(n: int) -> callable:
 # Working around JAX not always properly respecting __jax_array__, see JAX issue #10065
 # This comes up in particular when using SpectralNorm.
 def _to_jax_array(weight):
-    if hasattr(weight, "__jax_array__"):
-        return weight.__jax_array__()
-    else:
-        return weight
+    return weight.__jax_array__() if hasattr(weight, "__jax_array__") else weight
 
 
 class Conv(Module):

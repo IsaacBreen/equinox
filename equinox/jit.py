@@ -88,9 +88,8 @@ class _JitWrapper(Module):
         )
         if is_lower:
             return self._cached.lower(dynamic, static)
-        else:
-            dynamic_out, static_out = self._cached(dynamic, static)
-            return combine(dynamic_out, static_out.value)
+        dynamic_out, static_out = self._cached(dynamic, static)
+        return combine(dynamic_out, static_out.value)
 
     def __call__(__self, *args, **kwargs):
         return __self._fun_wrapper(False, args, kwargs)
@@ -99,9 +98,7 @@ class _JitWrapper(Module):
         return __self._fun_wrapper(True, args, kwargs)
 
     def __get__(self, instance, owner):
-        if instance is None:
-            return self
-        return jtu.Partial(self, instance)
+        return self if instance is None else jtu.Partial(self, instance)
 
 
 @doc_strip_annotations

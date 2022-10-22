@@ -242,15 +242,9 @@ def test_methods(call, outer):
 
     def run(_m):
         if call:
-            if outer:
-                return eqx.filter_jit(_m)(y)
-            else:
-                return _m(y)
+            return eqx.filter_jit(_m)(y) if outer else _m(y)
         else:
-            if outer:
-                return eqx.filter_jit(_m.method)(y)
-            else:
-                return _m.method(y)
+            return eqx.filter_jit(_m.method)(y) if outer else _m.method(y)
 
     m = M(1)
     assert run(m) == 2

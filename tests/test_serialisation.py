@@ -84,9 +84,7 @@ def test_custom_leaf_serialisation(getkey, tmp_path):
     )
 
     def ser_filter_spec(f, x):
-        if isinstance(x, jnp.ndarray):
-            pass
-        else:
+        if not isinstance(x, jnp.ndarray):
             return eqx.default_serialise_filter_spec(f, x)
 
     eqx.tree_serialise_leaves(tmp_path, tree, filter_spec=ser_filter_spec)

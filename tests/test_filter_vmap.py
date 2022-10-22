@@ -115,6 +115,7 @@ def test_ensemble(getkey):
 @pytest.mark.parametrize("call", [False, True])
 @pytest.mark.parametrize("outer", [False, True])
 def test_methods(call, outer):
+
     class M(eqx.Module):
         increment: Union[int, jnp.ndarray]
 
@@ -141,11 +142,10 @@ def test_methods(call, outer):
             assert eqx.filter_vmap(m)(y) == 6
         else:
             assert m(y) == 6
+    elif outer:
+        assert eqx.filter_vmap(m.method)(y) == 6
     else:
-        if outer:
-            assert eqx.filter_vmap(m.method)(y) == 6
-        else:
-            assert m.method(y) == 6
+        assert m.method(y) == 6
 
 
 def test_args_kwargs():
